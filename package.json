@@ -1,0 +1,53 @@
+{
+  "name": "wookoon-cas-sdk",
+  "version": "0.1.0",
+  "description": "一个用于 Vue 3 的独立认证 SDK，基于 Casdoor/OAuth2",
+  "keywords": [
+    "vue",
+    "vue3",
+    "wookoon",
+    "cas",
+    "auth",
+    "authentication",
+    "casdoor",
+    "oauth2",
+    "sdk"
+  ],
+  "author": "GK <geekor@outlook.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Geekor/wookoon-cas-sdk"
+  },
+  "type": "module",
+  "main": "./dist/wookoon-cas-sdk.umd.cjs",
+  "module": "./dist/wookoon-cas-sdk.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/wookoon-cas-sdk.js",
+      "require": "./dist/wookoon-cas-sdk.umd.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && tsc --emitDeclarationOnly",
+    "preview": "vite preview"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "@vitejs/plugin-vue": "^6.0.8",
+    "@vue/tsconfig": "^0.9.1",
+    "typescript": "~6.0.2",
+    "vite": "^8.2.0",
+    "vite-plugin-dts": "^3.6.3",
+    "vue": "^3.5.40"
+  }
+}
