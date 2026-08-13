@@ -25,7 +25,7 @@ export class AuthClient {
    * 跳转到后端 Auth Service 提供的登录页 (最终会跳转到 Casdoor)
    */
   login(redirectUri: string): void {
-    const url = new URL('/api/cas/login', this.config.authServerUrl);
+    const url = new URL('/api/cas/login/redirect', this.config.authServerUrl);
     url.searchParams.set('redirect_uri', redirectUri);
     window.location.href = url.toString();
   }
@@ -89,7 +89,21 @@ export class AuthClient {
    * 登出
    */
   logout(): void {
-    this.tokenManager.clearToken();
-    // 可选：调用后端 /api/cas/logout 接口清除服务端 Session
+    // 调用后端 /api/cas/logout 接口清除服务端 Session
+
+    const token = this.getAccessToken();
+    if (!token) return;
+
+    const url = new URL('/api/cas/logout', this.config.authServerUrl);
+    
+    try {
+      fetch(url.toString(), {
+        headers: { Authorization: `Bearer ${token}` },
+      }).finally(() => {
+        this.tokenManager.clearToken();
+      });
+    } catch {
+      this.tokenManager.clearToken();
+    }
   }
 }
