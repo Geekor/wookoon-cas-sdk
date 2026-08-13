@@ -38,7 +38,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build && tsc --emitDeclarationOnly",
-    "prepublishOnly": "pnpm build"
+    "prepublishOnly": "pnpm build",
+    "release": "pnpm build && npm version patch && npm publish"
   },
   "peerDependencies": {
     "vue": "^3.5.0"
