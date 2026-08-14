@@ -25,7 +25,7 @@ export class AuthClient {
    * 跳转到后端 Auth Service 提供的登录页 (最终会跳转到 Casdoor)
    */
   login(redirectUri: string): void {
-    const url = new URL('/api/cas/login/redirect', this.config.authServerUrl);
+    const url = new URL('/api/cas/login-auto', this.config.authServerUrl);
     url.searchParams.set('redirect_uri', redirectUri);
     window.location.href = url.toString();
   }

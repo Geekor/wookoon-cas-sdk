@@ -7,7 +7,7 @@
 │  Vue 前端    │
 │  (SDK)      │
 └──────┬──────┘
-       │ 1. 调用 /api/cas/login/redirect 跳转登录 CAS URL
+       │ 1. 调用 /api/cas/login-auto 跳转登录 CAS URL
        │ 2. 回调带 code 到前端
        │ 3. 前端调用 /api/cas/callback
        ▼
