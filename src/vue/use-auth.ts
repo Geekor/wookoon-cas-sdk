@@ -18,7 +18,7 @@ const error = ref<string | null>(null);
 export function createAuth(config: AuthConfig) {
   if (clientInstance) {
     console.warn('Auth SDK is already initialized.');
-    return;
+    return clientInstance;
   }
   
   clientInstance = new AuthClient(config);
@@ -36,6 +36,8 @@ export function createAuth(config: AuthConfig) {
         isLoading.value = false;
       });
   }
+
+  return clientInstance
 }
 
 /**
@@ -66,6 +68,10 @@ export function useAuth() {
     }
   };
 
+  const profile = () => {
+    clientInstance!.profile();
+  };
+
   const logout = () => {
     clientInstance!.logout();
     user.value = null;
@@ -85,6 +91,7 @@ export function useAuth() {
     // 方法
     login,
     logout,
+    profile,
     handleCallback,
     getAccessToken,
   };

@@ -19,11 +19,14 @@ export default defineConfig({
     },
     rollupOptions: {
       // 确保 vue 不被打包进 SDK，而是作为外部依赖
-      external: ['vue'],
+      external: ['vue', 'vue-router'],
       output: {
         globals: {
           vue: 'Vue',
+          'vue-router': 'VueRouter'
         },
+        // preserveModules 关闭；不要让 rollup 把类型展开
+        preserveModules: false
       },
     },
   },

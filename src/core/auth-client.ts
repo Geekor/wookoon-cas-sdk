@@ -86,6 +86,15 @@ export class AuthClient {
   }
 
   /**
+   * 跳转到后端提供的个人资料页
+   */
+  async profile(): Promise<void> {
+    const url = new URL('/api/cas/me-auto', this.config.authServerUrl);
+    // window.location.href = url.toString();
+    window.open(url.toString(), '_blank')
+  }
+
+  /**
    * 登出
    */
   logout(): void {
