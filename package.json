@@ -1,6 +1,6 @@
 {
   "name": "wookoon-cas-sdk",
-  "version": "0.1.20",
+  "version": "0.1.22",
   "description": "一个用于 Vue 3 的独立认证 SDK，基于 Casdoor/OAuth2",
   "keywords": [
     "vue",

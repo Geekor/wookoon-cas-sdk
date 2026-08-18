@@ -139,3 +139,24 @@ useEzWookoonRequest().get('/api/foo/bar').then((r) => {
   // TODO
 })
 ```
+
+5. `src/env.d.ts`
+
+```ts
+/// <reference types="vite/client" />
+
+interface ImportMetaEnv {
+  readonly VITE_SERVER_URL: string
+  readonly VITE_API_BASE_URL: string
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv
+}
+```
+
+6. `.env`
+
+```conf
+VITE_SERVER_URL="http://localhost:8080"
+```
