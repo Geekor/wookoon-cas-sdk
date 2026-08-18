@@ -12,7 +12,7 @@
        │ 3. 前端调用 /api/cas/callback
        ▼
 ┌─────────────────────────────────┐
-│       Auth Service (本项目)      │
+│       Auth Service              │
 │  ┌───────────────────────────┐  │
 │  │  Casdoor SDK              │  │
 │  │  - 用 code 换 token       │  │
@@ -56,22 +56,21 @@ pnpm add wookoon-cas-sdk@^0.1
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
-import { createAuth } from '@my-org/auth-sdk'
+import { createEzWookoon } from 'wookoon-cas-sdk'
+import type { RouteRecordRaw } from 'vue-router'
 
 const app = createApp(App)
 
-// 初始化认证 SDK
-createAuth({
-  // 你的后端 Auth Service 地址
-  authServerUrl: import.meta.env.VITE_AUTH_SERVER_URL, 
-  // [可选] 默认 wookoon-cas-token
-  storageKey: 'my_app_token',
-  // [可选] 刷新页面时自动获取用户信息，默认 true
-  autoFetchUser: true 
+createEzWookoon({
+  serverUrl: import.meta.env.VITE_SERVER_URL,
+  installRoutes: (list: RouteRecordRaw[]) => {
+    list.forEach(r => router.addRoute(r))
+  }
 })
 
 app.use(router)
 app.mount('#app')
+
 ```
 
 
@@ -79,20 +78,39 @@ app.mount('#app')
 
 ```vue
 <script setup lang="ts">
-import { useAuth } from '@my-org/auth-sdk'
+import { EzWookoonNavDemo } from 'wookoon-cas-sdk'
+
+</script>
+
+<template>
+  <div>
+    <EzWookoonNavDemo />
+    <div>content</div>
+  </div>
+</template>
+```
+
+`EZAWookoonNavDemo` 内容如下，你可以参考并自定义一个你自己的版本
+
+```vue
+<script setup lang="ts">
 import { useRouter } from 'vue-router'
+import { useEzWookoonAuth } from 'wookoon-cas-sdk'
 
 const router = useRouter()
-const { user, isAuthenticated, isLoading, login, logout } = useAuth()
+const { user, isAuthenticated, isLoading, login, logout, profile } = useEzWookoonAuth()
 
 function handleLogin() {
-  // 登录成功后，后端会重定向回当前页面的 /callback 路由
-  login(`${window.location.origin}/callback`) 
+  login()
 }
 
 function handleLogout() {
   logout()
-  router.push('/login')
+  router.push('/')
+}
+
+function handleMyProfile() {
+  profile()
 }
 </script>
 
@@ -100,7 +118,8 @@ function handleLogout() {
   <nav>
     <div v-if="isLoading">加载中...</div>
     <template v-else-if="isAuthenticated && user">
-      <span>欢迎, {{ user.displayName || user.username }}</span>
+      <span>欢迎, <a href="#" @click="handleMyProfile()">{{ user.displayName || user.username }}</a></span>
+      &ensp;
       <button @click="handleLogout">退出</button>
     </template>
     <template v-else>
@@ -110,68 +129,13 @@ function handleLogout() {
 </template>
 ```
 
-4. 处理回调 (`Callback.vue`)
 
-```vue
-<script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { useAuth } from '@my-org/auth-sdk'
-
-const router = useRouter()
-const route = useRoute()
-const { handleCallback, error } = useAuth()
-const localError = ref('')
-
-onMounted(async () => {
-  const code = route.query.code as string
-  const state = route.query.state as string
-
-  if (!code) {
-    localError.value = '缺少授权 code'
-    return
-  }
-
-  try {
-    // 调用 SDK 处理回调，换取 Token 并更新状态
-    await handleCallback(code, state)
-    
-    // 登录成功，跳转到首页或之前保存的 redirect 页面
-    router.replace('/')
-  } catch (e: any) {
-    localError.value = e.message || '登录失败'
-  }
-})
-</script>
-
-<template>
-  <div style="padding: 40px; text-align: center;">
-    <div v-if="localError" style="color: red;">{{ localError }}</div>
-    <div v-else>正在处理登录，请稍候...</div>
-  </div>
-</template>
-```
-
-5. 配合 Axios 自动携带 Token (src/utils/request.ts)
+4. 配合 Axios 自动携带 Token 
 
 ```ts
-import axios from 'axios'
-import { useAuth } from '@my-org/auth-sdk'
+import { useEzWookoonRequest } from 'wookoon-cas-sdk';
 
-const request = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+useEzWookoonRequest().get('/api/foo/bar').then((r) => {
+  // TODO
 })
-
-request.interceptors.request.use((config) => {
-  // 在请求拦截器中获取 Token 并附加
-  const { getAccessToken } = useAuth()
-  const token = getAccessToken()
-  
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
-  return config
-})
-
-export default request
 ```
